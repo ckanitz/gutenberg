@@ -145,11 +145,9 @@
 	// Space every block using margins instead of padding
 	// This allows margins to collapse, which gives a better representation of how it looks on the frontend
 	.editor-block-list__block-edit {
-		margin-top: $block-padding * 2 + 4px;
-		margin-bottom: $block-padding * 2 + 4px;
+		margin-top: $block-padding * 2 + $block-spacing;
+		margin-bottom: $block-padding * 2 + $block-spacing;
 	}
-
-	margin-bottom: $block-spacing;
 
 	/**
 	 * Notices
@@ -781,11 +779,14 @@
 		right: auto;
 		box-shadow: none;
 
+		// This is an important one. Because the toolbar is sticky, it's part of the flow.
+		// It behaves as relative, in other words, until it reaches an edge and then behaves as fixed.
+		// But by applying a float, we take it out of this flow. The benefit is that we don't need to compensate for margins.
+		// In turn, this allows margins on sibling elements to collapse to parent elements.
+		float: left;
+
 		// Move the block toolbar out of the flow using translate. 
 		transform: translateY( -$block-toolbar-height -$block-padding -$border-width );
-
-		// Compensate for the space the toolbar takes in the block flow.
-		margin-bottom: -$block-toolbar-height;
 
 		// Compensate for translate, so the sticky sticks to the top.
 		top: $block-toolbar-height + $block-padding;
@@ -824,6 +825,22 @@
 		pointer-events: auto;
 	}
 
+	// fixmet, verify this works, øv det virkede ikke. prøv translate?
+	// Compensate for the uncollapsing of margins that the toolbar does. This affects any children that have their own margins.
+	/*& + * {
+		margin-top: -$block-padding;
+	}*/
+	/*& + *:before {
+		content: '';
+		display: block;
+		background: red;
+		width: 2px;
+		height: 2px;
+		margin-top: -$block-padding * 2;
+	}*/
+	/*& + * {
+		transform: translateY( -14px );
+	}*/
 }
 
 .editor-block-contextual-toolbar .editor-block-toolbar {
